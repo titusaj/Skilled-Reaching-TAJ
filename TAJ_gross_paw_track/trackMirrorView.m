@@ -7,8 +7,9 @@ targetSigma = [0.2,0.2,0.2];
 
 foregroundThresh = 25/255;
 
-pawHSVrange = [1 .1 .5 1.5 .98 1.5];
 
+
+pawHSVrange = [1 .1 .5 1.5 .5 1.5];
 maxDistPerFrame = 20;
 whiteThresh = 0.8;
 

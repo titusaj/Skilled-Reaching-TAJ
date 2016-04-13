@@ -11,7 +11,7 @@ maxFrontPanelSep = 20;
 maxDistPerFrame = 20;
 
 numStretches = 15;
-
+pawHSVrange = [1 .1 .5 1.5 .5 1.5];
 % stretchTol = [0.0 1.0];
 % foregroundThresh = 45/255;
 whiteThresh = 0.85;
@@ -203,6 +203,16 @@ temp = mirror_greenHSVthresh & (prevMask_dilate | prevMask_panel_dilate);
 
 greenMask = processMask(temp,'sesize',1);
 
-temp = bwconvhull(greenMask,'union');
+%temp = bwconvhull(greenMask,'union');
 fullMask = false(h,w);
+
+%Take the temp object and then find the biggest blob with the assumption
+%this will be the dorsal surface of the paw. 
+
+%once the biggest blob is found then draw a circle of small are corrposng
+%to paw. 
+
+%MAke the silloehte a circle always
+
+
 fullMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3)) = temp;

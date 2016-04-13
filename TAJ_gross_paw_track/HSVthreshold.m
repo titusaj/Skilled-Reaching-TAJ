@@ -29,4 +29,4 @@ h_mask = (h_diff_from_center <= angle_thresh);
 s_mask = (s >= thresholds(3) & s <= thresholds(4));
 v_mask = (v >= thresholds(5) & v <= thresholds(6));
 
-mask = v_mask;% h_mask & s_mask & v_mask;
+mask =  h_mask & s_mask & v_mask;

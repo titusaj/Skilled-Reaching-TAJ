@@ -5,6 +5,7 @@ w = video.Width;
 
 maxFrontPanelSep = 20;
 
+
 pawHSVrange = [1 .1 .5 1.5 .98 1.5]; %this is to pick of red from the image
 
 targetMean = [0.5,0.2,0.5
@@ -16,6 +17,9 @@ targetSigma = [0.2,0.2,0.2
 initPawMask = cell(1,2);
 foregroundThresh = 25/255;
 whiteThresh = 0.3;
+
+
+numStreches =7; %Number of times to loop through colorapdapt
 
 ROIheight = 220;    % in pixels - how high above the shelf to look for the paw
 ROIwidth = 120;
@@ -86,7 +90,11 @@ if strcmpi(class(BGimg_ud),'uint8')
     BGimg_ud = double(BGimg_ud) / 255;
 end
 orig_BGimg_ud = BGimg_ud;
-BGimg_ud = color_adapthisteq(BGimg_ud);
+
+
+for ii = 1:numStreches
+    BGimg_ud = color_adapthisteq(BGimg_ud);
+end
 
 vidName = fullfile(video.Path, video.Name);
 video = VideoReader(vidName);
@@ -112,7 +120,8 @@ end
 %                              'targetmean',targetMean(1,:),...
 %                              'targetsigma',targetSigma(1,:));
 abs_BGdiff = imabsdiff(BGimg_ud,image_ud);
-% BGdiff = imsubtract(image_ud,BGimg_ud);
+%abs_BGdiff = image_ud;
+BGdiff = imsubtract(image_ud,BGimg_ud);
 BGdiff_stretch = color_adapthisteq(abs_BGdiff);
 decorr_red_BG = decorrstretch(BGdiff_stretch,...
                              'targetmean',targetMean(1,:),...
