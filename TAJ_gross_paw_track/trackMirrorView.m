@@ -172,7 +172,7 @@ temp = bwmorph(bwconvhull(initPawMask),'remove');
 points2d{currentFrame} = [x,y];
 % framesChecked = 0;
 % isPawVisible(frameCount,:) = true(1,2);   % by definition (almost), paw is visible in both views in the initial frame
-while video.CurrentTime  < 1.14 && video.CurrentTime >= 1.09
+while video.CurrentTime  < video.Duration && video.CurrentTime >= 0
 
     prevFrame = frameCount;
 %     framesChecked = framesChecked + 1;
@@ -228,8 +228,7 @@ while video.CurrentTime  < 1.14 && video.CurrentTime >= 1.09
                              'targetmean',targetMean,...
                              'targetsigma',targetSigma,...
                              'whitethresh',whiteThresh);
-    figure(2)
-    imshow(fullMask)
+  
     
 
 	if any(fullMask(:))
@@ -241,7 +240,7 @@ while video.CurrentTime  < 1.14 && video.CurrentTime >= 1.09
     else
         points2d{currentFrame} = [];
         isPawVisible(currentFrame) = false;
-        
+        lastFrame = currentFrame;
         
         if isPawVisible(lastFrame)
             prevMask = imdilate(prevMask, strel('disk',maxDistPerFrame));
@@ -250,7 +249,7 @@ while video.CurrentTime  < 1.14 && video.CurrentTime >= 1.09
     
 	lastFrame = currentFrame;
         
-%     showSingleViewTracking(image_ud,fullMask)
+     showSingleViewTracking(image_ud,fullMask)
 end
 
 end
