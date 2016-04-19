@@ -7,9 +7,9 @@ targetSigma = [0.2,0.2,0.2];
 
 foregroundThresh = 25/255;
 
-
-
-pawHSVrange = [1 .1 .5 1.5 .5 1.5];
+pawHSVrange = [.95,.1, 0.8, 1.0, 0.5, 1.0   % pick out extrnal red
+               .8662, 0.05, 0.98, 1.0, 0.5, 5 ];   %pick out the internal red
+           
 maxDistPerFrame = 20;
 whiteThresh = 0.8;
 
@@ -90,7 +90,7 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
-function [points2d,timeList,isPawVisible] = trackPaw_mirror_local( video, ...
+function [points2d,timeList,isPawVisible,mirror_image_ud] = trackPaw_mirror_local( video, ...
                                     BGimg_ud, ...
                                     initPawMask, ...
                                     pawBlob, ...
@@ -173,7 +173,7 @@ temp = bwmorph(bwconvhull(initPawMask),'remove');
 points2d{currentFrame} = [x,y];
 % framesChecked = 0;
 % isPawVisible(frameCount,:) = true(1,2);   % by definition (almost), paw is visible in both views in the initial frame
-while video.CurrentTime  < video.Duration && video.CurrentTime >= 0
+while video.CurrentTime  < video.duration && video.CurrentTime >= .85
 
     prevFrame = frameCount;
 %     framesChecked = framesChecked + 1;
@@ -189,7 +189,7 @@ while video.CurrentTime  < video.Duration && video.CurrentTime >= 0
     end
     currentFrame = round((video.CurrentTime) * fps);
     fprintf('frame number %d, current frame %d\n',frameCount, currentFrame);
-    video.CurrentTime  
+   
     
     image = readFrame(video);
     
@@ -222,7 +222,7 @@ while video.CurrentTime  < video.Duration && video.CurrentTime >= 0
     image_ud = color_adapthisteq(image_ud);
     
     
-    [fullMask,~] = trackNextStep_mirror(image_ud,fundMat,BGimg_ud,prevMask,boxRegions,pawPref,...
+    [fullMask,~]  = trackNextStep_mirror(image_ud,fundMat,BGimg_ud,prevMask,boxRegions,pawPref,...
                              'foregroundthresh',foregroundThresh,...
                              'pawhsvrange',pawHSVrange,...
                              'maxdistperframe',maxDistPerFrame,...

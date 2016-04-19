@@ -1,5 +1,6 @@
 function [fullMask,greenMask] = trackNextStep_mirror( image_ud, fundMat, BGimg_ud, prevMask, boxRegions, pawPref, varargin)
 
+
 h = size(image_ud,1); w = size(image_ud,2);
 targetMean = [0.5,0.2,0.5
               0.3,0.5,0.5];
@@ -11,9 +12,12 @@ maxFrontPanelSep = 20;
 maxDistPerFrame = 20;
 
 numStretches = 15;
-pawHSVrange = [1 .1 .5 1.5 .5 1.5];
+pawHSVrange = [.95,.1, 0.8, 1.0, 0.5, 1.0   % pick out extrnal red
+               .8662, 0.05, 0.98, 1.0, 0.5, 5 ];   %pick out the internal red
+           
+           
 % stretchTol = [0.0 1.0];
-% foregroundThresh = 45/255;
+% foregroundThresh = 45/255; 
 whiteThresh = 0.85;
 
 frontPanelMask = boxRegions.frontPanelMask;
@@ -52,8 +56,8 @@ for iarg = 1 : 2 : nargin - 6
     switch lower(varargin{iarg})
 %         case 'foregroundthresh',
 %             foregroundThresh = varargin{iarg + 1};
-        case 'pawhsvrange',
-            pawHSVrange = varargin{iarg + 1};
+         case 'pawhsvrange',
+             pawHSVrange = varargin{iarg + 1};
 %         case 'resblob',
 %             restrictiveBlob = varargin{iarg + 1};
 %         case 'stretchtol',
@@ -92,6 +96,10 @@ prevMask = prevMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 frontPanelEdge = frontPanelEdge(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 extMask = extMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 
+
+
+
+
 frontPanelMask = frontPanelMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 % centerMask = centerMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 intMask = intMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
@@ -110,7 +118,9 @@ decorr_green = decorrstretch(str_img,...
 % mirror_decorr_green = decorr_green(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
 decorr_green_hsv = rgb2hsv(decorr_green);
 mirror_decorr_green_hsv = decorr_green_hsv(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
-
+% 
+% figure(5)
+% imshow(mirror_decorr_green_hsv)
 
 prevMask_panel_dilate = prevMask;
 
@@ -143,11 +153,24 @@ end
 
 prevMask_dilate = imdilate(prevMask,strel('disk',maxDistPerFrame));
 
-mirror_greenHSVthresh_ext = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
-mirror_greenHSVthresh_int = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
 
-mirror_greenHSVthresh_ext = mirror_greenHSVthresh_ext & (prevMask_dilate | prevMask_panel_dilate);
-mirror_greenHSVthresh_int = mirror_greenHSVthresh_int & (prevMask_dilate | prevMask_panel_dilate);
+pawHSVrange = [1,.1, 0.7, 1, 0.7, 1,   % pick out extrnal red
+              .9, .05 , .7, 1, .5 ,.65] ;   %pick out the internal yellow of the paw
+           
+           
+           
+
+mirror_greenHSVthresh_ext = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
+mirror_greenHSVthresh_int = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(2,:));
+% 
+% figure(2)
+% imshow(mirror_greenHSVthresh_ext)
+% 
+% figure(3)
+% imshow(mirror_greenHSVthresh_int)
+
+% mirror_greenHSVthresh_ext = mirror_greenHSVthresh_ext & (prevMask_dilate | prevMask_panel_dilate);
+% mirror_greenHSVthresh_int = mirror_greenHSVthresh_int & (prevMask_dilate | prevMask_panel_dilate);
 
 mirror_greenHSVthresh_ext = mirror_greenHSVthresh_ext & extMask;
 mirror_greenHSVthresh_int = mirror_greenHSVthresh_int & intMask;
@@ -155,24 +178,34 @@ mirror_greenHSVthresh_int = mirror_greenHSVthresh_int & intMask;
 % temp = prevMask_dilate & mirror_greenHSVthresh_int;
 % mirror_greenHSVthresh_ext = processMask(mirror_greenHSVthresh_ext,'sesize',2);
 % mirror_greenHSVthresh_int = processMask(temp,'sesize',2);
-
-libHSVthresh_int = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
-libHSVthresh_int = libHSVthresh_int & intMask;
-
-libHSVthresh_ext = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
-libHSVthresh_ext = libHSVthresh_ext & extMask & ~whiteMask;
-
-mirror_greenHSVthresh_ext = imreconstruct(mirror_greenHSVthresh_ext, libHSVthresh_ext);
-mirror_greenHSVthresh_int = imreconstruct(mirror_greenHSVthresh_int, libHSVthresh_int);
+% 
+% libHSVthresh_int = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
+% libHSVthresh_int = libHSVthresh_int & intMask;
+% 
+% libHSVthresh_ext = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
+% libHSVthresh_ext = libHSVthresh_ext & extMask & ~whiteMask;
+% 
+% mirror_greenHSVthresh_ext = imreconstruct(mirror_greenHSVthresh_ext, libHSVthresh_ext);
+% mirror_greenHSVthresh_int = imreconstruct(mirror_greenHSVthresh_int, libHSVthresh_int);
 
 mirror_greenHSVthresh = mirror_greenHSVthresh_ext | mirror_greenHSVthresh_int;
-
 mirror_greenHSVthresh = mirror_greenHSVthresh & ~whiteMask;
 
+
+
+figure(4)
+imshow(mirror_greenHSVthresh)
+
 behindPanelMask = frontPanelEdge & intMask;
+
+
+
 behindOverlap = behindPanelMask & (prevMask_dilate | prevMask_panel_dilate);
+
+
+
+
 if any(behindOverlap(:))
-    
     BGimg_ud = BGimg_ud(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
     
     abs_BGdiff = imabsdiff(mirror_image_ud, BGimg_ud);
@@ -186,33 +219,65 @@ if any(behindOverlap(:))
     behindShelfRegion = projMaskFromTangentLines(shelfMask, fundMat', [1,1,h-1,w-1], size(BGimg_ud));
     behindShelfRegion = imfill(behindShelfRegion, [1 1]);
     
+  
+    
     temp = temp & behindPanelMask & behindShelfRegion;
     mirror_greenHSVthresh = mirror_greenHSVthresh | temp;
     
-%     diff_greenHSVthresh = HSVthreshold(decorr_green_BG_hsv, pawHSVrange(1,:));
-%     diff_greenHSVthresh = diff_greenHSVthresh & behindOverlap;
+   
+    
+    diff_greenHSVthresh = HSVthreshold(decorr_green_BG_hsv, pawHSVrange(1,:));
+    diff_greenHSVthresh = diff_greenHSVthresh & behindOverlap;
 % else
 %     diff_greenHSVthresh = false(size(prevMask_dilate));
 % end
 end
 
+
+
+
 % greenThresh = diff_greenHSVthresh | mirror_greenHSVthresh;
 
 % temp = greenThresh & (prevMask_dilate | prevMask_panel_dilate);
-temp = mirror_greenHSVthresh & (prevMask_dilate | prevMask_panel_dilate);
 
+temp = mirror_greenHSVthresh & (prevMask_dilate | prevMask_panel_dilate);
 greenMask = processMask(temp,'sesize',1);
 
-%temp = bwconvhull(greenMask,'union');
+ 
+
+% 
+% Take the temp object and then find the biggest blob with the assumption
+% this will be the dorsal surface of the paw. 
+[temp, oneBlobCheck]  = ExtractNLargestBlobs(mirror_greenHSVthresh,2);
+oneBlobCheck
+%If there is one blob do a conveunion if there is two merge the two blobs
+if oneBlobCheck == 0
+    temp = bwconvhull(temp,'union');
+elseif oneBlobCheck  == 1
+     temp = bwconvhull(mirror_greenHSVthresh,'union');
+end
+    
+
+
+
+
 fullMask = false(h,w);
 
-%Take the temp object and then find the biggest blob with the assumption
-%this will be the dorsal surface of the paw. 
+
+
 
 %once the biggest blob is found then draw a circle of small are corrposng
 %to paw. 
+centroid  = regionprops(temp, 'centroid');
+centroid_x = centroid.Centroid(1);
+centroid_y = centroid.Centroid(2);
 
 %MAke the silloehte a circle always
-
+h = size(temp,1);
+w = size(temp,2);
+tempFullMask = false(h, w);
+circleRadii = 5;
+circle = insertShape(uint16(tempFullMask),'circle',[centroid_x centroid_y circleRadii]);
+temp = rgb2gray(circle); 
 
 fullMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3)) = temp;
