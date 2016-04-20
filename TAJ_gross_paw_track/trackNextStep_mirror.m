@@ -1,4 +1,4 @@
-function [fullMask,greenMask] = trackNextStep_mirror( image_ud, fundMat, BGimg_ud, prevMask, boxRegions, pawPref, varargin)
+function [fullMask,greenMask,centroid] = trackNextStep_mirror( image_ud, fundMat, BGimg_ud, prevMask, boxRegions, pawPref, varargin)
 
 
 h = size(image_ud,1); w = size(image_ud,2);
@@ -193,8 +193,6 @@ mirror_greenHSVthresh = mirror_greenHSVthresh & ~whiteMask;
 
 
 
-figure(4)
-imshow(mirror_greenHSVthresh)
 
 behindPanelMask = frontPanelEdge & intMask;
 
@@ -248,8 +246,12 @@ greenMask = processMask(temp,'sesize',1);
 % 
 % Take the temp object and then find the biggest blob with the assumption
 % this will be the dorsal surface of the paw. 
-[temp, oneBlobCheck]  = ExtractNLargestBlobs(mirror_greenHSVthresh,2);
+[temp, oneBlobCheck]  = ExtractNLargestBlobs(mirror_greenHSVthresh,1);
+
 oneBlobCheck
+
+figure(2)
+imshow(temp)
 %If there is one blob do a conveunion if there is two merge the two blobs
 if oneBlobCheck == 0
     temp = bwconvhull(temp,'union');
@@ -257,7 +259,7 @@ elseif oneBlobCheck  == 1
      temp = bwconvhull(mirror_greenHSVthresh,'union');
 end
     
-
+tempActual = temp; %temprotaly store the blob
 
 
 
@@ -280,4 +282,5 @@ circleRadii = 5;
 circle = insertShape(uint16(tempFullMask),'circle',[centroid_x centroid_y circleRadii]);
 temp = rgb2gray(circle); 
 
+temp = tempActual; 
 fullMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3)) = temp;

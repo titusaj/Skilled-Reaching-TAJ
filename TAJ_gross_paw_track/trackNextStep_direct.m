@@ -105,6 +105,11 @@ decorr_green = decorrstretch(str_img,...
                              'targetsigma',targetSigma(1,:));
 decorr_green_hsv = rgb2hsv(decorr_green);
 
+%Have too account for the dorsal and ventral surface of the paw when thresholding
+pawHSVrange      = [1,.1,.9,1.1,.9,1.1; %Ventral Surface
+                    .1,.1,.6,.75,.7,.85]; %Dorsal Surface
+
+
 prevMask_dilate = imdilate(prevMask,strel('disk',maxDistPerFrame));
 dil_mask = imdilate(prevMask,strel('line',10,90)) | imdilate(prevMask,strel('line',10,270));
 shelf_overlap_mask = dil_mask & shelfMask;
@@ -122,13 +127,13 @@ else
     prevMask_panel_dilate = false(size(prevMask));
 end
 
-greenHSVthresh = HSVthreshold(decorr_green_hsv,pawHSVrange(1,:));
-greenHSVthresh = greenHSVthresh & ~greenBGmask;
+greenHSVthresh = HSVthreshold(decorr_green_hsv,pawHSVrange(2,:));
+%greenHSVthresh = greenHSVthresh & ~greenBGmask;
 
 projGreenThresh = greenHSVthresh & im_masked & (centerProjMask | prevMask_dilate | prevMask_panel_dilate);
 projGreenThresh = projGreenThresh & ~whiteMask;
 
-lib_HSVmask = HSVthreshold(decorr_green_hsv,pawHSVrange(1,:));
+lib_HSVmask = HSVthreshold(decorr_green_hsv,pawHSVrange(2,:));
 fullThresh = imreconstruct(projGreenThresh, lib_HSVmask);
 
 fullThresh = bwconvhull(fullThresh,'union');
