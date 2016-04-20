@@ -97,7 +97,7 @@ temp = bwmorph(bwconvhull(initPawMask),'remove');
 points2d{currentFrame} = [x,y];
 
 % framesChecked = 0;
-while video.CurrentTime < video.duration && video.CurrentTime >= 1.09
+while video.CurrentTime < video.duration && video.CurrentTime >= 0
 
     prevFrame = frameCount;
 %     framesChecked = framesChecked + 1;
