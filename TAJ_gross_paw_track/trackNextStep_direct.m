@@ -106,7 +106,7 @@ decorr_green = decorrstretch(str_img,...
 decorr_green_hsv = rgb2hsv(decorr_green);
 
 %Have too account for the dorsal and ventral surface of the paw when thresholding
-pawHSVrange      = [1,.1,.9,1.1,.9,1.1; %Ventral Surface
+pawHSVrange      = [1,.1,.85,1,.85,1; %Ventral Surface
                     .1,.1,.6,.75,.7,.85]; %Dorsal Surface
 
 
@@ -127,14 +127,21 @@ else
     prevMask_panel_dilate = false(size(prevMask));
 end
 
-greenHSVthresh = HSVthreshold(decorr_green_hsv,pawHSVrange(2,:));
-%greenHSVthresh = greenHSVthresh & ~greenBGmask;
 
-projGreenThresh = greenHSVthresh & im_masked & (centerProjMask | prevMask_dilate | prevMask_panel_dilate);
-projGreenThresh = projGreenThresh & ~whiteMask;
 
-lib_HSVmask = HSVthreshold(decorr_green_hsv,pawHSVrange(2,:));
-fullThresh = imreconstruct(projGreenThresh, lib_HSVmask);
+%Working here to instead to use the red channel to isollate the paw, then
+%use a filter just to isolate the red region.
+
+red
+
+% greenHSVthresh = HSVthreshold(decorr_green_hsv,pawHSVrange(1,:));
+% %greenHSVthresh = greenHSVthresh & ~greenBGmask;
+% 
+% projGreenThresh = greenHSVthresh & im_masked & (centerProjMask | prevMask_dilate | prevMask_panel_dilate);
+% projGreenThresh = projGreenThresh & ~whiteMask;
+% 
+% %lib_HSVmask = HSVthreshold(decorr_green_hsv,pawHSVrange(2,:));
+% %fullThresh = imreconstruct(projGreenThresh, lib_HSVmask);
 
 fullThresh = bwconvhull(fullThresh,'union');
 
