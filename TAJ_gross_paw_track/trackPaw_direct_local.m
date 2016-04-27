@@ -187,8 +187,8 @@ while video.CurrentTime < video.duration && video.CurrentTime >= 0
             visibleView = 1;
             F = fundMat';
             hiddenView = 3 - visibleView;
-            projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
-            fullMask{hiddenView} = projMask & prevMasks{hiddenView};
+          %  projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
+           % fullMask{hiddenView} = projMask & prevMasks{hiddenView};
             if ~any(fullMask{hiddenView}(:))
                 fullMask{hiddenView} = prevMasks{hiddenView};
             end

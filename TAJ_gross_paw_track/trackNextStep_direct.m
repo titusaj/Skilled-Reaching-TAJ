@@ -73,16 +73,16 @@ end
 shelfLims = regionprops(boxRegions.shelfMask,'boundingbox');
 
 mirror_mask = false(h,w);
-if ~isempty(cur_mir_points2d)
-    for ii = 1 : size(cur_mir_points2d,1)
-        mirror_mask(cur_mir_points2d(ii,2),cur_mir_points2d(ii,1)) = true;
-    end
-    mirror_mask = imfill(mirror_mask,'holes');
-    projMask = projMaskFromTangentLines(mirror_mask, fundMat, [1 1 w-1 h-1], [h,w]);
-    centerProjMask = projMask & centerMask;
-else
-    centerProjMask = imdilate(centerMask,strel('disk',150));    % expand center region because this is probably the rat walking up to the slot
-end
+% if ~isempty(cur_mir_points2d)
+%     for ii = 1 : size(cur_mir_points2d,1)
+%         mirror_mask(cur_mir_points2d(ii,2),cur_mir_points2d(ii,1)) = true;
+%     end
+%     mirror_mask = imfill(mirror_mask,'holes');
+%     projMask = projMaskFromTangentLines(mirror_mask, fundMat, [1 1 w-1 h-1], [h,w]);
+%     centerProjMask = projMask & centerMask;
+% else
+%     centerProjMask = imdilate(centerMask,strel('disk',150));    % expand center region because this is probably the rat walking up to the slot
+% end
 
 abs_BGdiff = imabsdiff(image_ud, BGimg_ud);
 % BGdiff_stretch = color_adapthisteq(abs_BGdiff);
@@ -145,26 +145,17 @@ pawRGBrange = [1.1, .1 ,0, 0, .1,.2];
 % %fullThresh = imreconstruct(projGreenThresh, lib_HSVmask);
 
 
+%Titus edit to use rgb and epipole to identify the paw
 pawRGBrange = [1.1, .1 ,.2, .6, .1,.2];
 rgbmask = RGBthreshold(decorr_green, pawRGBrange);
 
 
 projRedThresh = rgbmask & centerMask;
-
 centroidMirror = [mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2))]
 
-lines = epipolarLine(fundMat,centroidMirror)
 
-figure(5)
-imshow(projRedThresh)
-
-
-paw =  ExtractNLargestBlobs(projRedThresh,1);
-fullThresh = bwconvhull(paw,'union');
-
-
-
-
+%This function identifyie full thresh paw based on label
+[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMat,cur_mir_points2d); 
 
 bbox = [1,1,w-1,h-1];
 bbox(2,:) = bbox;
