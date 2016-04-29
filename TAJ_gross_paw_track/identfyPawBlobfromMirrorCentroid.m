@@ -18,7 +18,7 @@ function [fullMask] = identfyPawBlobfromMirrorCentroid(binaryImage,fundMat,cur_m
     
     %Draw the epipolar line based on the center of the mirror
     centroidMirror = [mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2))];
-    lines = epipolarLine(fundMat',centroidMirror);
+    lines = epipolarLine(fundMat,centroidMirror);
     points = lineToBorderPoints(lines, size(binaryImage));
 
     %x and y 
@@ -26,12 +26,12 @@ function [fullMask] = identfyPawBlobfromMirrorCentroid(binaryImage,fundMat,cur_m
     y= (-lines(1).*x-lines(3))/lines(2);
     
     %Check epipolar line is being plotted correctly
-    figure
-    imshow(binaryImage)
-    hold on
-    line(points(:, [1,3])', points(:, [2,4])');
-     
-    
+%     figure
+%     imshow(binaryImage)
+%     hold on
+%     line(points(:, [1,3])', points(:, [2,4])');
+%      
+%     
     
     %Get the profile of the image using the epipolar line
     profile  = improfile(binaryImage,points(:, [1,3]),points(:, [2,4]));
@@ -46,8 +46,12 @@ function [fullMask] = identfyPawBlobfromMirrorCentroid(binaryImage,fundMat,cur_m
 	nonZeroElements2 = find(dif < 0);
     
     %Find the centroid of the two points
-    centroidDirect = [(x(nonZeroElements2)+x(nonZeroElements))/2,(y(nonZeroElements2)+y(nonZeroElements))/2];
- 
+    for i = 1:length(nonZeroElements)
+        centroidDirect{i} = [(x(nonZeroElements2(i))+x(nonZeroElements(i)))/2,(y(nonZeroElements2(i))+y(nonZeroElements(i)))/2];
+    end
+    
+    %Pick the first centroid direct found
+    centroidDirect = centroidDirect{1};
    
     %Extract the three biggest blobs
     [bigestBlobImage,oneBlobCheck] = ExtractNLargestBlobs(binaryImage, 3);

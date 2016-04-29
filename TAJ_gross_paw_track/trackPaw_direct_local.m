@@ -162,7 +162,7 @@ while video.CurrentTime < video.duration && video.CurrentTime >= 0
             isPawVisible(currentFrame,:) = [false,true];
             % object visible in side view but not direct view
             visibleView = 2;
-            F = fundMat';
+            F = fundMat;
             hiddenView = 3 - visibleView;
             projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
             fullMask{hiddenView} = projMask & prevMasks{hiddenView};
