@@ -32,7 +32,7 @@ if strcmpi(timeDir,'reverse')
     frameCount = numFrames;
 else
     numFrames = round((video.Duration - video.CurrentTime) * fps);
-    frameCount = 1;
+    frameCount = numFrames;
 end
 totalFrames = round(video.Duration * fps);
 
@@ -97,9 +97,9 @@ temp = bwmorph(bwconvhull(initPawMask),'remove');
 points2d{currentFrame} = [x,y];
 
 % framesChecked = 0;
-while video.CurrentTime < video.duration && video.CurrentTime >= 0
-
-    prevFrame = frameCount;
+%while video.CurrentTime < video.duration && video.CurrentTime >= 0
+while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
+       prevFrame = frameCount;
 %     framesChecked = framesChecked + 1;
     
     if strcmpi(timeDir,'reverse')
@@ -113,6 +113,9 @@ while video.CurrentTime < video.duration && video.CurrentTime >= 0
     end
     currentFrame = round((video.CurrentTime) * fps);
     fprintf('frame number %d, current frame %d\n',frameCount, currentFrame);
+    
+    
+    
     
     image = readFrame(video);
     if strcmpi(timeDir,'reverse')
@@ -157,72 +160,77 @@ while video.CurrentTime < video.duration && video.CurrentTime >= 0
 	% if the mask isn't visible in either view, start with the 3d points
 	% from the previous n frames, and predict where the paw should be.
 	% Then, project it into the missing view
-    if ~any(fullMask{1}(:)) || ~any(fullMask{2}(:))
-        if ~any(fullMask{1}(:)) && any(fullMask{2}(:))
-            isPawVisible(currentFrame,:) = [false,true];
-            % object visible in side view but not direct view
-            visibleView = 2;
-            F = fundMat;
-            hiddenView = 3 - visibleView;
-            projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
-            fullMask{hiddenView} = projMask & prevMasks{hiddenView};
-            if ~any(fullMask{hiddenView}(:))
-                fullMask{hiddenView} = prevMasks{hiddenView};
-            end
-            fullMask = estimateHiddenSilhouette(fullMask,full_bbox,fundMat,[h,w]);
-            
-            temp = bwconvhull(fullMask{visibleView});
-            temp_ext = bwmorph(temp,'remove');
-            [y,x] = find(temp_ext);
-            points2d{currentFrame} = NaN(length(y),2,2);
-            points2d{currentFrame}(:,1,visibleView) = x;
-            points2d{currentFrame}(:,2,visibleView) = y;
-            
-            if isPawVisible(lastFrame,1)
-                fullMask{1} = imdilate(prevMask,strel('disk',maxDistPerFrame));
-            end
-        elseif any(fullMask{1}(:)) && ~any(fullMask{2}(:))
-            isPawVisible(currentFrame,:) = [true,false];
-            % object visible in direct view but not mirror view
-            visibleView = 1;
-            F = fundMat';
-            hiddenView = 3 - visibleView;
-          %  projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
-           % fullMask{hiddenView} = projMask & prevMasks{hiddenView};
-            if ~any(fullMask{hiddenView}(:))
-                fullMask{hiddenView} = prevMasks{hiddenView};
-            end
-            fullMask = estimateHiddenSilhouette(fullMask,full_bbox,fundMat,[h,w]);
-            
-            temp = bwconvhull(fullMask{visibleView});
-            temp_ext = bwmorph(temp,'remove');
-            [y,x] = find(temp_ext);
-            points2d{currentFrame} = NaN(length(y),2,2);
-            points2d{currentFrame}(:,1,visibleView) = x;
-            points2d{currentFrame}(:,2,visibleView) = y;
-        else   % not visible in either view, expand region to look in next frame
-            isPawVisible(currentFrame,:) = [false,false];
-            fullMask = prevMasks;
-            if isPawVisible(lastFrame,1)
-                fullMask{1} = imdilate(prevMask,strel('disk',maxDistPerFrame));
-            end
-        end
-    else
-        isPawVisible(currentFrame,:) = [true,true];
-        % only calculate 3d points if visible in both views
-        matched_points = matchMirrorMaskPoints(fullMask, fundMat);
-        points2d{currentFrame} = matched_points;
-        % convert matched points to normalized coordinates
-        mp_norm = zeros(size(matched_points));
-        for iView = 1 : 2
-            mp_norm(:,:,iView) = normalize_points(squeeze(matched_points(:,:,iView)), K);
-        end
-        [points3d{currentFrame},~,~] = triangulate_DL(mp_norm(:,:,1),mp_norm(:,:,2),eye(4,3),P2);
-%         center3d(currentFrame,:) = mean(points3d{currentFrame},1);
-    end
-        
-	lastFrame = currentFrame;
-     showTracking(image_ud,fullMask)
+%     if ~any(fullMask{1}(:)) || ~any(fullMask{2}(:))
+%         if ~any(fullMask{1}(:)) && any(fullMask{2}(:))
+%             isPawVisible(currentFrame,:) = [false,true];
+%             % object visible in side view but not direct view
+%             visibleView = 2;
+%             F = fundMat;
+%             hiddenView = 3 - visibleView;
+%             projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
+%             fullMask{hiddenView} = projMask & prevMasks{hiddenView};
+%             if ~any(fullMask{hiddenView}(:))
+%                 fullMask{hiddenView} = prevMasks{hiddenView};
+%             end
+%             fullMask = estimateHiddenSilhouette(fullMask,full_bbox,fundMat,[h,w]);
+%             
+%             temp = bwconvhull(fullMask{visibleView});
+%             temp_ext = bwmorph(temp,'remove');
+%             [y,x] = find(temp_ext);
+%             points2d{currentFrame} = NaN(length(y),2,2);
+%             points2d{currentFrame}(:,1,visibleView) = x;
+%             points2d{currentFrame}(:,2,visibleView) = y;
+%             
+%             if isPawVisible(lastFrame,1)
+%                 fullMask{1} = imdilate(prevMask,strel('disk',maxDistPerFrame));
+%             end
+%         elseif any(fullMask{1}(:)) && ~any(fullMask{2}(:))
+%             isPawVisible(currentFrame,:) = [true,false];
+%             % object visible in direct view but not mirror view
+%             visibleView = 1;
+%             F = fundMat';
+%             hiddenView = 3 - visibleView;
+%           %  projMask = projMaskFromTangentLines(fullMask{visibleView},F, [1 1 w-1 h-1], [h,w]);
+%            % fullMask{hiddenView} = projMask & prevMasks{hiddenView};
+%             if ~any(fullMask{hiddenView}(:))
+%                 fullMask{hiddenView} = prevMasks{hiddenView};
+%             end
+%             fullMask = estimateHiddenSilhouette(fullMask,full_bbox,fundMat,[h,w]);
+%             
+%             temp = bwconvhull(fullMask{visibleView});
+%             temp_ext = bwmorph(temp,'remove');
+%             [y,x] = find(temp_ext);
+%             points2d{currentFrame} = NaN(length(y),2,2);
+%             points2d{currentFrame}(:,1,visibleView) = x;
+%             points2d{currentFrame}(:,2,visibleView) = y;
+%         else   % not visible in either view, expand region to look in next frame
+%             isPawVisible(currentFrame,:) = [false,false];
+%             fullMask = prevMasks;
+%             if isPawVisible(lastFrame,1)
+%                 fullMask{1} = imdilate(prevMask,strel('disk',maxDistPerFrame));
+%             end
+%         end
+%     else
+%         isPawVisible(currentFrame,:) = [true,true];
+%         % only calculate 3d points if visible in both views
+%         matched_points = matchMirrorMaskPoints(fullMask, fundMat);
+%         points2d{currentFrame} = matched_points;
+%         % convert matched points to normalized coordinates
+%         mp_norm = zeros(size(matched_points));
+%         for iView = 1 : 2
+%             mp_norm(:,:,iView) = normalize_points(squeeze(matched_points(:,:,iView)), K);
+%         end
+%         [points3d{currentFrame},~,~] = triangulate_DL(mp_norm(:,:,1),mp_norm(:,:,2),eye(4,3),P2);
+% %         center3d(currentFrame,:) = mean(points3d{currentFrame},1);
+%     end
+%         
+
+%%Testing if thers is a difference using just the the centroids of the
+%%silhoette instead of finding the tangents
+[currentFramePoints3d] = fullMasktoPoints3d(fullMask,P2,image_ud) 
+[points3d{currentFrame}] = currentFramePoints3d; 
+
+%     showTracking(image_ud,fullMask)
 end
 
 end

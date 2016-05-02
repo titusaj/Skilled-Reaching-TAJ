@@ -115,9 +115,13 @@ whiteMask = whiteMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 decorr_green = decorrstretch(str_img,...
                              'targetmean',targetMean(1,:),...
                              'targetsigma',targetSigma(1,:));
+                         
+                         
 % mirror_decorr_green = decorr_green(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
 decorr_green_hsv = rgb2hsv(decorr_green);
 mirror_decorr_green_hsv = decorr_green_hsv(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
+
+
 % 
 % figure(5)
 % imshow(mirror_decorr_green_hsv)
@@ -208,10 +212,11 @@ if any(behindOverlap(:))
     
     abs_BGdiff = imabsdiff(mirror_image_ud, BGimg_ud);
     BGdiff_stretch = color_adapthisteq(abs_BGdiff);
-    decorr_green_BG = decorrstretch(BGdiff_stretch,...
-                                 'targetmean',targetMean(1,:),...
-                                 'targetsigma',targetSigma(1,:));
-    
+    decorr_green_BG = decorrstretch(BGdiff_stretch);
+% 
+%                                  'targetmean',targetMean(1,:),...
+%                                  'targetsigma',targetSigma(1,:));
+%     
     decorr_green_BG_hsv = rgb2hsv(decorr_green_BG);
     temp = HSVthreshold(decorr_green_BG_hsv,pawHSVrange(1,:));
     behindShelfRegion = projMaskFromTangentLines(shelfMask, fundMat', [1,1,h-1,w-1], size(BGimg_ud));
@@ -237,6 +242,7 @@ end
 % greenThresh = diff_greenHSVthresh | mirror_greenHSVthresh;
 
 % temp = greenThresh & (prevMask_dilate | prevMask_panel_dilate);
+
 
 temp = mirror_greenHSVthresh & (prevMask_dilate | prevMask_panel_dilate);
 greenMask = processMask(temp,'sesize',1);

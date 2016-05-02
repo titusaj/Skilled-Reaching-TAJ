@@ -119,7 +119,7 @@ if strcmpi(timeDir,'reverse')
     frameCount = numFrames;
 else
     numFrames = round((video.Duration - video.CurrentTime) * fps);
-    frameCount = 1;
+    frameCount = numFrames;
 end
 totalFrames = round(video.Duration * fps);
 
@@ -173,7 +173,8 @@ temp = bwmorph(bwconvhull(initPawMask),'remove');
 points2d{currentFrame} = [x,y];
 % framesChecked = 0;
 % isPawVisible(frameCount,:) = true(1,2);   % by definition (almost), paw is visible in both views in the initial frame
-while video.CurrentTime  < video.duration && video.CurrentTime >= .85
+%while video.CurrentTime  < video.duration && video.CurrentTime >= 0
+while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
 
     prevFrame = frameCount;
 %     framesChecked = framesChecked + 1;
@@ -249,7 +250,7 @@ while video.CurrentTime  < video.duration && video.CurrentTime >= .85
         end
     end
     
-	lastFrame = currentFrame;
+	%lastFrame = currentFrame;
         
      showSingleViewTracking(image_ud,fullMask)
 end

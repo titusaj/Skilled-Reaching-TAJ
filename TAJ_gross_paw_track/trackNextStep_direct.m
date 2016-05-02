@@ -100,9 +100,11 @@ for ii = 1 : numStretches
 end
 whiteMask = rgb2gray(str_img) > whiteThresh;
 
-decorr_green = decorrstretch(str_img,...
-                             'targetmean',targetMean(1,:),...
-                             'targetsigma',targetSigma(1,:));
+ decorr_green = decorrstretch(str_img);
+ %,...
+%                              'targetmean',targetMean(1,:),...
+%                              'targetsigma',targetSigma(1,:));
+%                          
 decorr_green_hsv = rgb2hsv(decorr_green);
 
 %Have too account for the dorsal and ventral surface of the paw when thresholding
@@ -146,18 +148,18 @@ pawRGBrange = [1.1, .1 ,0, 0, .1,.2];
 
 
 %Titus edit to use rgb and epipole to identify the paw
-pawRGBrange = [1.1, .1 ,.2, .6, .1,.2];
+pawRGBrange = [1, .3 ,.2, .6, .1,.2];
 rgbmask = RGBthreshold(decorr_green, pawRGBrange);
 
 
 projRedThresh = rgbmask & centerMask;
-centroidMirror = [mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2))]
+%centroidMirror = [mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2))]
 
 
 %Get the fund Mat for the direct mirror %seems to be diffrent
 load('fundMatDirectTemp.mat')
 
-%This function identifyie full thresh paw based on label
+%This function identify if full thresh paw based on label
 [fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect',cur_mir_points2d); 
 
 bbox = [1,1,w-1,h-1];
@@ -165,7 +167,11 @@ bbox(2,:) = bbox;
 if ~isempty(cur_mir_points2d) && any(fullThresh(:))
     masks{1} = fullThresh;
     masks{2} = mirror_mask;
-    fullMask = estimateHiddenSilhouette(masks, bbox,fundMat,[h,w]);
+    
+    %Trying withouth estimation of hiddent silhouette
+    fullMask{1} = masks{1};
+    fullMask{2} = masks{2};
+%    fullMask = estimateHiddenSilhouette(masks, bbox,fundMat,[h,w]);
 elseif ~isempty(cur_mir_points2d) && ~any(fullThresh(:))
     fullMask{1} = false(h,w);
     fullMask{2} = mirror_mask;
