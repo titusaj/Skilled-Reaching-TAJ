@@ -95,6 +95,7 @@ for ii = 1 : 3
 end
 
 str_img = image_ud;
+
 for ii = 1 : numStretches
     str_img = color_adapthisteq(str_img);
 end
@@ -153,6 +154,7 @@ rgbmask = RGBthreshold(decorr_green, pawRGBrange);
 
 
 projRedThresh = rgbmask & centerMask;
+
 %centroidMirror = [mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2))]
 
 
@@ -160,7 +162,10 @@ projRedThresh = rgbmask & centerMask;
 load('fundMatDirectTemp.mat')
 
 %This function identify if full thresh paw based on label
-[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect',cur_mir_points2d); 
+[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect',cur_mir_points2d);
+
+figure(7)
+imshow(fullThresh);
 
 bbox = [1,1,w-1,h-1];
 bbox(2,:) = bbox;

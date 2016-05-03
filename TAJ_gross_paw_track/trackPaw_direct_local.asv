@@ -98,7 +98,7 @@ points2d{currentFrame} = [x,y];
 
 % framesChecked = 0;
 %while video.CurrentTime < video.duration && video.CurrentTime >= 0
-while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
+while video.CurrentTime  < 1.1 && video.CurrentTime >= 
        prevFrame = frameCount;
 %     framesChecked = framesChecked + 1;
     
@@ -111,8 +111,6 @@ while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
     else
         frameCount = frameCount + 1;
     end
-  
-    
     currentFrame = round((video.CurrentTime) * fps);
     fprintf('frame number %d, current frame %d\n',frameCount, currentFrame);
     
