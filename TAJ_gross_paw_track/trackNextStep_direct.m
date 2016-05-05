@@ -132,10 +132,6 @@ end
 
 
 
-%Working here to instead to use the red channel to isollate the paw, then
-%use a filter just to isolate the red region.
-pawRGBrange = [1.1, .1 ,0, 0, .1,.2];
-
 
 
  greenHSVthresh = HSVthreshold(decorr_green_hsv,pawHSVrange(1,:));
@@ -147,25 +143,38 @@ pawRGBrange = [1.1, .1 ,0, 0, .1,.2];
 % %lib_HSVmask = HSVthreshold(decorr_green_hsv,pawHSVrange(2,:));
 % %fullThresh = imreconstruct(projGreenThresh, lib_HSVmask);
 
-
 %Titus edit to use rgb and epipole to identify the paw
-pawRGBrange = [1, .3 ,.2, .6, .1,.2];
+pawRGBrange = [1.25, .2 ,.5, 1.1, .1,.2];
 rgbmask = RGBthreshold(decorr_green, pawRGBrange);
 
+
+
+figure(7)
+imshow(rgbmask);
 
 projRedThresh = rgbmask & centerMask;
 
 %centroidMirror = [mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2))]
 
 
+
 %Get the fund Mat for the direct mirror %seems to be diffrent
 load('fundMatDirectTemp.mat')
 
-%This function identify if full thresh paw based on label
-[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect',cur_mir_points2d);
 
-figure(7)
-imshow(fullThresh);
+
+
+   %have to feed a direct matrix problem
+    switch pawPref
+        case 'left',
+            fundMat = fundMatDirect.F(:,:,2);
+        case 'right',
+            fundMat = fundMatDirect.F(:,:,1);
+    end
+
+%This function identify if full thresh paw based on label
+[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMat',cur_mir_points2d);
+
 
 bbox = [1,1,w-1,h-1];
 bbox(2,:) = bbox;
