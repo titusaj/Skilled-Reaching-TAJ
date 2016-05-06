@@ -161,20 +161,9 @@ projRedThresh = rgbmask & centerMask;
 %Get the fund Mat for the direct mirror %seems to be diffrent
 load('fundMatDirectTemp.mat')
 
-
-
-
-   %have to feed a direct matrix problem
-    switch pawPref
-        case 'left',
-            fundMat = fundMatDirect.F(:,:,2);
-        case 'right',
-            fundMat = fundMatDirect.F(:,:,1);
-    end
-
 %This function identify if full thresh paw based on label
-[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMat',cur_mir_points2d);
-
+[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect,cur_mir_points2d,boxRegions,pawPref,rgbmask);
+    
 
 bbox = [1,1,w-1,h-1];
 bbox(2,:) = bbox;
