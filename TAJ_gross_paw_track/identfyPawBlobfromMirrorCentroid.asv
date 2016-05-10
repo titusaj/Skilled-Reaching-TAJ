@@ -93,14 +93,9 @@
                        end
                    end 
                    
-                   
-                   if exist('closestBlobId')
-                        %Set the full Mask label
-                       fullMask = (labeledImage == closestBlobId);
-                       foundBlob = 1; %Got the blob and the centroid of intrest
-                   else
-                       keyboard
-                   end          
+                    %Set the full Mask label
+                    fullMask = (labeledImage == closestBlobId);
+                   foundBlob =1; %Got the blob and the centroid of intrest
         end
     
         

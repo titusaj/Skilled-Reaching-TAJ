@@ -21,7 +21,7 @@
 %Take the 
 
 
-function [y, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(strImage,boxRegions,fundMatOpp',pawPref,centerProjImage)
+function [y, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(strImage,boxRegions,fundMatOpp,pawPref,centerProjImage)
 
     %Find the thresholded projected image
     sideProjImage = strImage & boxRegions.extMask;
@@ -54,6 +54,10 @@ function [y, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirro
             imshow(centerProjImage)
             hold on
             line(points(:, [1,3])', points(:, [2,4])');
+              hold on
+            scatter(centroidMirror.Centroid(1),centroidMirror.Centroid(2),'b')
+
+
             
     %Get the profile of the image using the epipolar line
     profile  = improfile(centerProjImage ,points(:, [1,3]),points(:, [2,4]));
