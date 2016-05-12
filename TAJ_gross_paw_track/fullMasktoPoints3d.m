@@ -30,6 +30,11 @@ centroid_side = regionprops(fullMask{2}, 'centroid');
 centroid_direct = centroid_direct.Centroid;
 centroid_side = centroid_side.Centroid;
 
+figure(8)
+hold on
+imshow(fullMask{1})
+hold on
+scatter(centroid_direct(1),centroid_direct(2),'r')
 
 figure(3)
 hold on

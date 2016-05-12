@@ -21,7 +21,7 @@
 %Take the 
 
 
-function [y, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(strImage,boxRegions,fundMatOpp,pawPref,centerProjImage)
+function [y,points, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(strImage,boxRegions,fundMatOpp,pawPref,centerProjImage)
 
     %Find the thresholded projected image
     sideProjImage = strImage & boxRegions.extMask;
@@ -31,7 +31,7 @@ function [y, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirro
     [binaryImageBiggestBlobs,oneBlobCheck] = ExtractNLargestBlobs(sideProjImage, 3);  
 
     %Find the centroid of the oppoisite mirror where 
-        [labeledImage, numberOfBlobs] = bwlabel(binaryImageBiggestBlobs);
+    [labeledImage, numberOfBlobs] = bwlabel(binaryImageBiggestBlobs);
 
     %The image labelel 1 will be the largest in this extrackted image
     mirrorImage = (labeledImage == 1);
@@ -49,13 +49,13 @@ function [y, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirro
     x = [1:2040];
     y= (-lines(1).*x-lines(3))/lines(2);
     
-    %Check epipolar line is being plotted correctly
-            figure(8)
-            imshow(centerProjImage)
-            hold on
-            line(points(:, [1,3])', points(:, [2,4])');
-              hold on
-            scatter(centroidMirror.Centroid(1),centroidMirror.Centroid(2),'b')
+%     %Check epipolar line is being plotted correctly
+%             figure(8)
+%             imshow(centerProjImage)
+%             hold on
+%             line(points(:, [1,3])', points(:, [2,4])');
+%               hold on
+%             scatter(centroidMirror.Centroid(1),centroidMirror.Centroid(2),'b')
 
 
             
