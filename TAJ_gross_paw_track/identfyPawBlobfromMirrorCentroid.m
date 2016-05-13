@@ -122,11 +122,10 @@
     
         
         
-         [y_opp, points_opp, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(rgbMask,boxRegions,fundMatOpp',pawPref,binaryImageBiggestBlobs);
+         [y_opp, points_opp, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(rgbMask,boxRegions,fundMatOpp,pawPref,binaryImageBiggestBlobs);
         
   
         fullMask = blobFromEpipoles(points,points_opp,y,y_opp,binaryImage);
-         
          
 %         
 %         if foundBlob == 0

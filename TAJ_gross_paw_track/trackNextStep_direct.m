@@ -1,4 +1,4 @@
-function [fullMask] = trackNextStep_direct( image_ud, prev_image_ud, BGimg_ud, prevMask, cur_mir_points2d,boxRegions, pawPref, fundMat, greenBGmask, varargin)
+function [fullMask] = trackNextStep_direct(image_ud, prev_image_ud, BGimg_ud, prevMask, cur_mir_points2d,boxRegions, pawPref, fundMat, greenBGmask, varargin)
 
 h = size(image_ud,1); w = size(image_ud,2);
 targetMean = [0.5,0.2,0.5
@@ -165,7 +165,11 @@ load('fundMatDirectTemp.mat')
 
 %This function identify if full thresh paw based on label
 [fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect,cur_mir_points2d,boxRegions,pawPref,rgbmask);
-    
+ 
+%Use this function to find the top mask and draw line down to the epipolar
+%line
+[boundingLines] =trackTopView(image_ud, boxRegions)
+
 
 bbox = [1,1,w-1,h-1];
 bbox(2,:) = bbox;

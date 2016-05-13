@@ -40,14 +40,18 @@ function pawDirectMask = blobFromEpipoles(points,points_opp,y,y_opp,binaryImage)
             
             
             
-%              figure(7)
-%              imshow(binaryImage)
-%              hold on
-%              plot(x,y,'r')
-%              hold on
-%              plot(x,y_opp,'b')
-%              
-%              
+             figure(7)
+             imshow(binaryImage)
+             hold on
+             plot(x,y,'r')
+             hold on
+             plot(x,y_opp,'b')
+             
+             
+             
+            [boundingLines] =trackTopView(image_ud, boxRegions)
+             
+             
              
              maskPoints = [];
              maskPointsCounter = 1;
