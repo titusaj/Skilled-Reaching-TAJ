@@ -149,6 +149,8 @@ while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
     prevMasks{1} = prevMask;
     prevMasks{2} = fullMask{2};
     cur_points2d = mirror_points2d{currentFrame};
+
+    
     [fullMask] = trackNextStep_direct(image_ud,prev_image_ud,BGimg_ud,prevMask,cur_points2d,boxRegions,pawPref,fundMat,greenBGmask,...
                              'foregroundthresh',foregroundThresh,...
                              'pawhsvrange',pawHSVrange,...
@@ -157,6 +159,9 @@ while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
                              'targetsigma',targetSigma,...
                              'whitethresh',whiteThresh,...
                              'foregroundthresh',foregroundThresh);
+                         
+                         
+   
                          
 % 	maxDistPerFrame = orig_maxDistPerFrame;
 	% if the mask isn't visible in either view, start with the 3d points

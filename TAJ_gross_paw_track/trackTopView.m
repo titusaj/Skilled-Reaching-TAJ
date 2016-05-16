@@ -14,11 +14,11 @@
 
 
 
-function [boundingLines] =trackTopView(image_ud, boxRegions)
+function [boundingPoints] =trackTopView(image_ud)
 
 %Set the top mirror mask
-x = [374 260 1715 1625];
-y = [252 5 9 227];
+x = [848 869 1100 1109];
+y = [236 6 2 236];
 topMirrorMask = poly2mask(x, y, 1024, 2040);
 
 
@@ -31,33 +31,28 @@ pawRGBrange = [2.5, 1.5 ,0, 0, 0,0];
 rgbmaskTopMirror = RGBthreshold(decorr_green_topMirror , pawRGBrange);
 
 
+%Identify the blob of intrest
+[largestBlob] = ExtractNLargestBlobs(rgbmaskTopMirror,1);
 
-%Find the edges of the paw and creating a bounding box that will intersect
-%with the epipolar lines previously drawn
-
-
-%Onnce the blob of intrest is found draw two lines that will corrsponds to
-%vertical lines that bound paw when turned
-
-
+%Find the extrema
+stats = regionprops(largestBlob,'Extrema');
+      
 %Have to find where the paw is most spread out when it crosses to the front
-%Can run a diff profile around the 
-
+%Can run a diff profile around the
+sortedExterma = sort(stats.Extrema);
 
 %Find the top of the blob
+leftMost  = sortedExterma (1,:);
+rightMost = sortedExterma(end,:);
 
 
 %Find the bottom of the blob
+ x1 = leftMost(1);
+ x2 = rightMost(1);
+ 
+ boundingPoints(1) = x1;
+ boundingPoints(2) = x2;
 
-%Run a diff from the top to the bottom of the blob looking for the region which is the widdest
-%Find the widest are 
-
-
-
-
-
-
-
-
+ 
 
 end

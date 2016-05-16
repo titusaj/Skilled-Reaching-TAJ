@@ -10,7 +10,7 @@ targetSigma = [0.2,0.2,0.2
 maxFrontPanelSep = 20;
 maxDistPerFrame = 20;
 
-numStretches = 7;
+numStretches = 1;
 
 foregroundThresh = 45/255;
 whiteThresh = 0.8;
@@ -148,11 +148,11 @@ pawRGBrange = [1.25, .2 ,.5, 1.1, .1,.2];
 rgbmask = RGBthreshold(decorr_green, pawRGBrange);
 
 
-
-figure(7)
-imshow(rgbmask);
-hold on
-scatter(mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2)),'r') 
+% 
+% figure(7)
+% imshow(rgbmask);
+% hold on
+% scatter(mean(cur_mir_points2d(:,1)),mean(cur_mir_points2d(:,2)),'r') 
  
 projRedThresh = rgbmask & centerMask;
 
@@ -164,11 +164,9 @@ projRedThresh = rgbmask & centerMask;
 load('fundMatDirectTemp.mat')
 
 %This function identify if full thresh paw based on label
-[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect,cur_mir_points2d,boxRegions,pawPref,rgbmask);
+[fullThresh] = identfyPawBlobfromMirrorCentroid(projRedThresh,fundMatDirect,cur_mir_points2d,boxRegions,pawPref,rgbmask,image_ud);
  
-%Use this function to find the top mask and draw line down to the epipolar
-%line
-[boundingLines] =trackTopView(image_ud, boxRegions)
+
 
 
 bbox = [1,1,w-1,h-1];

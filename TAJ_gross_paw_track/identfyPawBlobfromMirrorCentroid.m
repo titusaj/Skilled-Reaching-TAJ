@@ -15,7 +15,7 @@
 %mask of the biggest blob that 
 
 
- function [fullMask] = identfyPawBlobfromMirrorCentroid(binaryImage,fundMatDirect,cur_mir_points2d,boxRegions,pawPref,rgbMask)
+ function [fullMask] = identfyPawBlobfromMirrorCentroid(binaryImage,fundMatDirect,cur_mir_points2d,boxRegions,pawPref,rgbMask, image_ud)
     
     %check to see if the blob has been found yet
    foundBlob =0;
@@ -122,11 +122,14 @@
     
         
         
-         [y_opp, points_opp, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(rgbMask,boxRegions,fundMatOpp,pawPref,binaryImageBiggestBlobs);
+       [y_opp, points_opp, nonZeroElements,nonZeroElements2] = identifyVentralSideofPawInMirror(rgbMask,boxRegions,fundMatOpp,pawPref,binaryImageBiggestBlobs);
         
   
-        fullMask = blobFromEpipoles(points,points_opp,y,y_opp,binaryImage);
-         
+        fullMask = blobFromEpipoles(points,points_opp,y,y_opp,binaryImage,image_ud);
+        
+        
+        
+        
 %         
 %         if foundBlob == 0
 %                 %Find the centroid of the two points
