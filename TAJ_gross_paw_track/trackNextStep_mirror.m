@@ -106,9 +106,13 @@ intMask = intMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 
 
 str_img = image_ud;
+
+
 for ii = 1 : numStretches
     str_img = color_adapthisteq(str_img);
 end
+
+
 whiteMask = rgb2gray(str_img) > whiteThresh;
 whiteMask = whiteMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 
@@ -188,7 +192,7 @@ mirror_greenHSVthresh_int = mirror_greenHSVthresh_int & intMask;
 % 
 % libHSVthresh_ext = HSVthreshold(mirror_decorr_green_hsv, pawHSVrange(1,:));
 % libHSVthresh_ext = libHSVthresh_ext & extMask & ~whiteMask;
-% 
+
 % mirror_greenHSVthresh_ext = imreconstruct(mirror_greenHSVthresh_ext, libHSVthresh_ext);
 % mirror_greenHSVthresh_int = imreconstruct(mirror_greenHSVthresh_int, libHSVthresh_int);
 
