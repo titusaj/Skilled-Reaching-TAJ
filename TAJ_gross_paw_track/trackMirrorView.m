@@ -177,6 +177,8 @@ points2d{currentFrame} = [x,y];
 while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
 
     prevFrame = frameCount;
+    
+    
 %     framesChecked = framesChecked + 1;
     
     if strcmpi(timeDir,'reverse')
@@ -188,6 +190,7 @@ while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
     else
         frameCount = frameCount + 1;
     end
+    
     currentFrame = round((video.CurrentTime) * fps);
     fprintf('frame number %d, current frame %d\n',frameCount, currentFrame);
    
@@ -252,7 +255,7 @@ while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
     
 	%lastFrame = currentFrame;
         
-     showSingleViewTracking(image_ud,fullMask)
+    showSingleViewTracking(image_ud,fullMask)
 end
 
 end

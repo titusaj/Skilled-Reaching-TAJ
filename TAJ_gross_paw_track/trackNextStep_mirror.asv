@@ -11,7 +11,7 @@ targetSigma = [0.2,0.2,0.2
 maxFrontPanelSep = 20;
 maxDistPerFrame = 20;
 
-numStretches = 1;
+numStretches = 15;
 pawHSVrange = [.95,.1, 0.8, 1.0, 0.5, 1.0   % pick out extrnal red
                .8662, 0.05, 0.98, 1.0, 0.5, 5 ];   %pick out the internal red
            
@@ -106,9 +106,9 @@ intMask = intMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 
 
 str_img = image_ud;
-for ii = 1 : numStretches
-    str_img = color_adapthisteq(str_img);
-end
+% for ii = 1 : numStretches
+%     str_img = color_adapthisteq(str_img);
+% end
 whiteMask = rgb2gray(str_img) > whiteThresh;
 whiteMask = whiteMask(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3));
 
@@ -270,6 +270,7 @@ tempActual = temp; %temprotaly store the blob
 
 fullMask = false(h,w);
 
+keyboard
 
 
 
