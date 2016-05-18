@@ -237,7 +237,7 @@ while video.CurrentTime  < 1.1 && video.CurrentTime >= .9
 [currentFramePoints3d] = fullMasktoPoints3d(fullMask,P2,image_ud) 
 [points3d{currentFrame}] = currentFramePoints3d; 
 
-%     showTracking(image_ud,fullMask)
+     showTracking(image_ud,fullMask)
 end
 
 end

@@ -10,7 +10,7 @@ targetSigma = [0.2,0.2,0.2
 maxFrontPanelSep = 20;
 maxDistPerFrame = 20;
 
-numStretches = 1;
+numStretches = 2;
 
 foregroundThresh = 45/255;
 whiteThresh = 0.8;
