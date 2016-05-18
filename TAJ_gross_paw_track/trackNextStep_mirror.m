@@ -126,10 +126,6 @@ decorr_green_hsv = rgb2hsv(decorr_green);
 mirror_decorr_green_hsv = decorr_green_hsv(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
 
 
-% 
-% figure(5)
-% imshow(mirror_decorr_green_hsv)
-
 prevMask_panel_dilate = prevMask;
 
 dil_mask = imdilate(prevMask,overlapCheck_SE_fromExt) & ~prevMask;    % look to see if the paw is at the outside edge of the front panel
@@ -203,13 +199,13 @@ mirror_greenHSVthresh = mirror_greenHSVthresh & ~whiteMask;
 
 
 behindPanelMask = frontPanelEdge & intMask;
-
-
-
 behindOverlap = behindPanelMask & (prevMask_dilate | prevMask_panel_dilate);
 
+figure(2)
+imshow(behindOverlap)
 
-
+figure(3)
+imshow((prevMask_dilate | prevMask_panel_dilate));
 
 if any(behindOverlap(:))
     BGimg_ud = BGimg_ud(ROI(2):ROI(2)+ROI(4),ROI(1):ROI(1)+ROI(3),:);
@@ -251,16 +247,11 @@ end
 temp = mirror_greenHSVthresh & (prevMask_dilate | prevMask_panel_dilate);
 greenMask = processMask(temp,'sesize',1);
 
- 
+%closestBlobToPrev = findClosestBlobToPrevious(prevMask, mirror_greenHSVthresh);
 
-% 
-% Take the temp object and then find the biggest blob with the assumption
-% this will be the dorsal surface of the paw. 
+
 [temp, oneBlobCheck]  = ExtractNLargestBlobs(mirror_greenHSVthresh,1);
 
-
-figure(2)
-imshow(temp)
 %If there is one blob do a conveunion if there is two merge the two blobs
 if oneBlobCheck == 0
     temp = bwconvhull(temp,'union');
@@ -268,9 +259,7 @@ elseif oneBlobCheck  == 1
      temp = bwconvhull(mirror_greenHSVthresh,'union');
 end
     
-tempActual = temp; %temprotaly store the blob
-
-
+tempActual = temp; %temp
 
 fullMask = false(h,w);
 
